@@ -1,14 +1,20 @@
 import { useEffect, useState } from 'react'
-import './App.css'
+import moment from 'moment';
 import axios from 'axios';
 
+import { RiDeleteBin7Fill } from 'react-icons/ri';
+import { MdLibraryAdd } from 'react-icons/md';
+import { FaSms, FaEdit } from 'react-icons/fa';
+
 import { ToastContainer, toast } from 'react-toastify';
+
+import { ModalForm } from "./Components/Modal";
+
 import 'react-toastify/dist/ReactToastify.css';
+import './App.css'
 
-import moment from 'moment';
-
-interface ContentListSale {
-  id: number;
+export interface ContentListSale {
+  id: any;
   sellerName: string;
   visited: number;
   deals: number;
@@ -18,14 +24,22 @@ interface ContentListSale {
 
 function App() {
   const [salesContent, setSaleContent] = useState<ContentListSale[]>([]);
+
   const [minDate, setMinDate] = useState("");
   const [maxDate, setMaxDate] = useState("");
 
+  const [editSale, setEditSale] = useState(
+    {id: null, sellerName: "", visited: 0, deals: 0, amount: 0, date: ""
+  });
+
+  const [show, setShow] = useState(false);
+
+  const getData = async () => {
+    const { data } = await axios.get("http://localhost:8080/sales");
+    setSaleContent(data.content);
+  }
+
   useEffect(() => {
-    const getData = async () => {
-      const { data } = await axios.get("http://localhost:8080/sales");
-      setSaleContent(data.content);
-    }
     getData();
   }, []);
 
@@ -41,8 +55,25 @@ function App() {
   const findSaleByDate = async () => {
     const { data } = await axios.get(`http://localhost:8080/sales?minDate=${minDate}&maxDate=${maxDate}`);
     setSaleContent(data.content);
+  };
+
+  const deleteSale = async (id: number) => {
+    const { data: message } = await axios.delete(`http://localhost:8080/sales/${id}`);
+
+    if (message === "Sale deleted") {
+      toast("Venda deletada com sucesso!");
+      setSaleContent(salesContent.filter(sale => sale.id !== id));
+    }
 
   };
+
+  const handleShow = () => setShow(true);
+
+  const handleEditSale = (obj: ContentListSale) => {
+    setShow(true);
+    setEditSale(obj);
+  };
+
 
   return (
     <div className="container mt-3 rounded p-3" style={{ backgroundColor: "#283142" }}>
@@ -80,7 +111,15 @@ function App() {
             <th scope="col">Visitas</th>
             <th scope="col">Vendas</th>
             <th scope="col">Total</th>
-            <th scope="col">Notificar</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col">
+              <button onClick={handleShow} className="btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <MdLibraryAdd size={25} color="#fff" />
+              </button>
+            </th>
+
           </tr>
         </thead>
         <tbody>
@@ -93,20 +132,49 @@ function App() {
               <td>{sale.deals}</td>
               <td>R$ {sale.amount}</td>
               <td>
-                <button 
-                  onClick={() => notify(sale.id)} 
-                  type="button" 
-                  className="btn btn-outline-danger"
+                <button
+                  onClick={() => notify(sale.id)}
+                  type="button"
+                  className="btn"
                 >
-                  &rarr;
+                  <FaSms size={22} color="#fff" />
                 </button>
+              </td>
+
+              <td>
+                <button
+                  onClick={() => handleEditSale(sale)}
+                  type="button"
+                  className="btn"
+                >
+                  <FaEdit size={22} color="#fff" />
+                </button>
+              </td>
+
+              <td>
+                <button
+                  onClick={() => deleteSale(sale.id)}
+                  type="button"
+                  className="btn"
+                >
+                  <RiDeleteBin7Fill size={22} color="#fff" />
+                </button>
+              </td>
+
+              <td>
               </td>
             </tr>
           ))}
 
-
         </tbody>
       </table>
+      <ModalForm
+        show={show}
+        setShow={setShow} 
+        getData={getData}
+        editSale={editSale}
+        setEditSale={setEditSale}
+      />
       <ToastContainer />
 
     </div>
