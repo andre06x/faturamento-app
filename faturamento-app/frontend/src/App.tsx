@@ -12,6 +12,7 @@ import { ModalForm } from "./Components/Modal";
 
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css'
+import { api } from "./services/api";
 
 export interface ContentListSale {
   id: any;
@@ -35,7 +36,7 @@ function App() {
   const [show, setShow] = useState(false);
 
   const getData = async () => {
-    const { data } = await axios.get("http://localhost:8080/sales");
+    const { data } = await api.get("/sales");
     setSaleContent(data.content);
   }
 
@@ -45,7 +46,7 @@ function App() {
 
   const notify = async (id: number) => {
     try {
-      await axios.get(`http://localhost:8080/sales/${id}/notification`);
+      await api.get(`/sales/${id}/notification`);
       toast("SMS enviado com sucesso!");
     } catch (err) {
       console.log(err)
@@ -53,12 +54,12 @@ function App() {
   }
 
   const findSaleByDate = async () => {
-    const { data } = await axios.get(`http://localhost:8080/sales?minDate=${minDate}&maxDate=${maxDate}`);
+    const { data } = await api.get(`/sales?minDate=${minDate}&maxDate=${maxDate}`);
     setSaleContent(data.content);
   };
 
   const deleteSale = async (id: number) => {
-    const { data: message } = await axios.delete(`http://localhost:8080/sales/${id}`);
+    const { data: message } = await api.delete(`/sales/${id}`);
 
     if (message === "Sale deleted") {
       toast("Venda deletada com sucesso!");

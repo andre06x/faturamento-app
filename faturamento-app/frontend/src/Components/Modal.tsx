@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { toast } from "react-toastify";
 import { ContentListSale } from "../App";
+import { api } from "../services/api";
 
 interface PropsModalForm {
   show: boolean;
@@ -31,7 +32,7 @@ const ModalForm: React.FC<PropsModalForm> = ({
 
   const insertSale = async () => {
     if (editSale.id !== null) {
-      const data = await axios.put(`http://localhost:8080/sales/${editSale.id}`, editSale);
+      const data = await api.put(`/sales/${editSale.id}`, editSale);
 
       if (data.status === 200) {
         toast("Venda atualizada com sucesso!");
@@ -43,7 +44,7 @@ const ModalForm: React.FC<PropsModalForm> = ({
     }
 
     if (editSale.id === null) {
-      const data = await axios.post("http://localhost:8080/sales", editSale);
+      const data = await api.post("/sales", editSale);
 
       if (data.status === 200) {
         toast("Venda criada com sucesso!");
