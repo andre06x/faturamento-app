@@ -28,4 +28,10 @@ public class SaleService {
 
         return repository.findSales(min, max, pageable);
     }
+
+    public Sale insertSale(Sale sale){
+        return repository.save(sale);
+    }
+
+
 }

@@ -29,6 +29,12 @@ public class SaleController {
         return service.findSales(minDate, maxDate, pageable);
     }
 
+    @PostMapping
+    public Sale insertSales(@RequestBody Sale sale){
+        return service.insertSale(sale);
+    }
+
+    
     @GetMapping("/{id}/notification")
     public void notifySms(@PathVariable Long id){
         smsService.sendSms(id);
