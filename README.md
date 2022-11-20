@@ -25,7 +25,7 @@ BACKEND
 
 FRONTEND
 - [REACT](https://pt-br.reactjs.org/)
-- [REACT](https://react-icons.github.io/react-icons/)
+- [REACT-ICONS](https://react-icons.github.io/react-icons/)
 - [BOOTSTRAP](https://pt-br.reactjs.org/)
 - [MOMENT](https://momentjs.com/)
 - [AXIOS](https://axios-http.com/ptbr/docs/intro)
